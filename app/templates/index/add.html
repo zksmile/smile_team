@@ -1,0 +1,67 @@
+{% extends "index/layout.html" %}
+{% block title %}投稿{% endblock %}
+
+{% block head %}
+<meta charset="utf-8">
+<link rel="stylesheet" href="{{ url_for('static',filename='editormd/css/editormd.css') }}" />
+{% endblock %}
+
+{% block content %}
+<form class="am-form am-form-horizontal" role="form" method="post" action="{{url_for('add')}}" enctype="multipart/form-data">
+{{ form.hidden_tag() }}
+
+{% if form.body.errors %}
+    {% for e in form.body.errors %}
+        <p class="help-block">{{ e }}</p>
+    {% endfor %}
+{% endif %}
+
+
+<div class="form-group">
+    <input type="text" class="form-control" id="title" name="title" placeholder="文章标题">
+    <input list="categories" name="category" class="form-control" placeholder="文章分类">
+        <datalist id="categories">
+        {% for cate in cates %}
+        <option value="{{ cate.name }}">
+        {% endfor %}
+    </datalist>
+</div>
+
+<div class="am-form-group am-form-group-lg am-form-group-sm am-form-group-md">
+    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+        <div id="test-editor" class="form-control">
+            {{ form.body(style="display:none;" ,class_="am-radius") }}
+        </div>
+    </div>
+</div>
+<button class="btn btn-lg btn-primary btn-block" id="check" type="submit">提交</button>
+
+
+<script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="{{ url_for('static',filename='editormd/editormd.min.js') }}"></script>
+<script type="text/javascript">
+    $(function() {
+        var editor = editormd("test-editor", {
+            height: 600,
+            path   : "{{ url_for('static',filename='editormd/lib/') }}",
+            syncScrolling: "single",
+            //theme : "dark",
+            //previewTheme : "dark",
+            codeFold : true,
+            saveHTMLToTextarea : true,    // 保存 HTML 到 Textarea
+            searchReplace : true,
+            emoji : true,
+            taskList : true,
+            tocm            : true,         // Using [TOCM]
+            tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+            flowChart : true,             // 开启流程图支持，默认关闭
+            sequenceDiagram : true,  
+            imageUpload : true,
+            imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+            imageUploadURL : "{{ url_for('upload') }}",
+        });
+    });
+</script>
+</div>
+</form>
+{% endblock %}

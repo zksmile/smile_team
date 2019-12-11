@@ -1,0 +1,86 @@
+{% extends "index/layout.html" %}
+{% block title %}主页{% endblock %}
+{% block head %}
+<style type="text/css"> 
+    * { margin: 0; padding: 0; } 
+      .tree {margin: 0;padding: 0;background-color:#FFFFFF;overflow: hidden;}  
+      /*隐藏input*/
+      .tree li input{position: absolute;left: 0;opacity: 0;z-index: 2;cursor: pointer;height: 1em;width:1em;top: 0;}  
+      /*所有菜单项设置统一样式*/
+      .tree li {position: relative;list-style: none;}   
+      /*一级菜单加下边线*/
+      .tree>li{border-bottom: 1px solid #d9d9d9;}
+      /*给有子菜单的菜单项添加背景图标*/
+      .tree li label {max-width:999px;cursor: pointer;display: block;margin:0 0 0 -50px;padding: 15px 10px 15px 70px;white-space:nowrap;overflow:hidden;text-overflow: ellipsis; }  
+      .tree li label:hover,li label:focus{background-color:#a7a7a7;color:#fff;}
+      /*清除所有展开的子菜单的display*/
+      .tree li input + ol{display: none;}  
+      /*当input被选中时，给所有展开的子菜单设置样式*/
+      .tree input:checked + ol {padding-left:14px;height: auto;display: block;}  
+      .tree input:checked + ol > li { height: auto;}  
+      /*末层菜单为A标签，设置样式*/
+      .tree li.file a{margin:0 -10px 0 -50px;padding: 15px 20px 15px 70px;text-decoration:none;display: block;color:#333333;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;} 
+      .tree li.file a:hover,li.file a:focus{background-color:#a7a7a7;color:#fff;} 
+      /*不同层级的菜单字体大小不同*/
+      .tree .folderOne{font-size: 18px;}
+      .tree .folderTwo{font-size:16px;}
+      .tree .folderThree{font-size:14px;}
+  </style>
+{% endblock %}
+{% block content %}
+	<div class="row clearfix">
+		<div class="col-md-2 column">
+			<ol class="tree">  
+		       <li>
+					<label class="folderOne"><a href="/main">主页</a></label>
+					{% for cate in cates_1 %}
+					<label for="folder{{ cate.id }}" class="folderOne">{{ cate.name }}</label> <input type="checkbox" id="folder{{ cate.id }}" />
+					<ol>  
+						{% for cate2 in cates_2 %}
+							{% if cate2.prefix_code == cate.code %}
+					    <li class="file folderTwo">
+					    	<label for="subfolder{{ cate2.code }}" class="folderTwo">{{ cate2.name }}</label> <input type="checkbox" id="subfolder{{ cate2.code }}"  />
+					    		<ol>
+					    			{% for article in articles %}
+					    				{% if article.category == cate2.code %}
+					    					<li class="file folderThree">
+					    						<a href="javascript:;" id="{{ article.id }}" >{{ article.title }}</a>
+					    					</li>
+					    				{% endif %}
+					    			{% endfor %}
+					    		</ol>
+					    </li>
+					    	{% endif %}
+					    {% endfor %}
+					 </ol>
+					{% endfor %}
+		       </li>  
+		   </ol>
+		</div>
+		<div class="col-md-10 column">
+			<div style="text-align:center"><h1 id="title"></h1></div>
+			<div style="text-align:center"><span id="addtime"></span></div>
+			<hr>
+			<div id="content"></div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("a").click(function(){
+				var id = $(this).attr("id");
+				$.post({
+					data : {"id":id},
+					url  : "/article",
+					success: function(data) {
+						$("#title").html(data.article['title']),
+						$("#addtime").html('<b>发布时间：</b>' + data.article['addtime'] + ' | <b>作者：</b>' +data.article['user']),
+						$("#content").html(data.article['content'])
+					},
+					error: function(data) {
+
+					}
+				});
+			});
+		});
+	</script>
+{% endblock %}

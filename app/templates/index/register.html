@@ -1,0 +1,23 @@
+{% extends "index/layout.html" %}
+{% block title %}注册{% endblock %}
+{% block content %}
+  <!-- Main Content -->
+<div class="container">
+  <form class="form-signin" action="{{url_for('register')}}" method="POST">
+    {{ form.csrf_token }}
+    <h2 class="form-signin-heading">Please sign up</h2>
+    {% for message in get_flashed_messages(with_categories=True) %}
+    <p color='red'>{{ message[1] }}</p>
+    {% endfor %}
+    <label for="inputEmail" class="sr-only">username</label>
+    <input type="text" name="username"  class="form-control" placeholder="请输入用户名">
+    <label for="inputEmail" class="sr-only">email</label>
+    <input type="text" name="email"  class="form-control" placeholder="请输入邮箱">
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" name="password1" id="inputPassword" class="form-control" placeholder="请输入密码">
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" name="password2" id="inputPassword" class="form-control" placeholder="再次输入密码">
+    <button class="btn btn-lg btn-primary btn-block" id="check" type="submit">提交</button>
+  </form>
+</div> 
+{% endblock %}
